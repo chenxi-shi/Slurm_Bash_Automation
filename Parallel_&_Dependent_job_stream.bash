@@ -1,14 +1,14 @@
 #!/bin/bash
 
-### The working directory, may change it to the dir you want
+### The working directory, change it to your dir
 dir="/gss_gpfs_scratch/shi.che/test_task_stream"
 
-### queue name for job execute on, may change it to the queue you want
+### queue name job executing on, change it to the queue you like
 queue="ser-par-10g-3"
-### num of cpu for node in the queue
+### cpu count for each node in the queue
 cpu_count=40
 
-### time you predict your job will spends, default is one day
+### time you predict your job would spends, default is one day 1:00:00:00
 ### in minutes in this case, hh:mm:ss 
 spend_time="40:00"
 
@@ -27,8 +27,8 @@ do
 
 	file="./$job_dir/$job_name_tandem.bash"
 	
-	### write a batch script for tandem job
-	echo "#!/bin/bash" >> $file
+	### write a batch script for a tandem job
+	echo "#!/bin/bash" > $file
 	echo "#SBATCH --job-name=$job_name_tandem" >> $file
 	echo "#SBATCH --output=$job_name_tandem.out" >> $file
 	echo "#SBATCH --error=$job_name_tandem.err" >> $file
@@ -39,9 +39,9 @@ do
 	echo "#SBATCH -D $dir/$job_dir" >> $file
 	echo "work=$dir/$job_dir" >> $file
 	echo "cd \$work" >> $file
-	# echo "tandem /gss_gpfs_scratch/ali.b/xtandem/1/input1.xml" >> $file
-	echo "python $dir/tandem`printf %01d $job`.py" >> $file
-	### submit tandem job into cluster
+	echo "tandem /gss_gpfs_scratch/ali.b/xtandem/1/input1.xml" >> $file
+	# echo "python $dir/tandem`printf %01d $job`.py" >> $file  # for testing
+	### submit tandem job into cluster and grap stdout
 	RES=$(sbatch $file)
 	# sbatch $file
 	
@@ -50,7 +50,7 @@ do
 	file="./$job_dir/$job_name_Tandem2XML.bash"
 	
 	### write a batch script for Tandem2XML job
-	echo "#!/bin/bash" >> $file
+	echo "#!/bin/bash" > $file
 	echo "#SBATCH --job-name=$job_name_Tandem2XML" >> $file
 	echo "#SBATCH --output=$job_name_Tandem2XML.out" >> $file
 	echo "#SBATCH --error=$job_name_Tandem2XML.err" >> $file
@@ -62,8 +62,8 @@ do
 	
 	echo "work=$dir/$job_dir" >> $file
 	echo "cd \$work" >> $file
-	# echo "Tandem2XML /gss_gpfs_scratch/ali.b/xtandem/1/1607011A_NC20A_10ul_180min.tandem.xml /gss_gpfs_scratch/ali.b/xtandem/1/1607011A_NC20A_10ul_180min.tandem.pep.xml" >> $file
-	echo "python $dir/Tandem2XML`printf %01d $job`.py" >> $file
+	echo "Tandem2XML /gss_gpfs_scratch/ali.b/xtandem/1/1607011A_NC20A_10ul_180min.tandem.xml /gss_gpfs_scratch/ali.b/xtandem/1/1607011A_NC20A_10ul_180min.tandem.pep.xml" >> $file
+	# echo "python $dir/Tandem2XML`printf %01d $job`.py" >> $file   # for testing
 	### submit Tandem2XML job into cluster
 	echo "$RES"
 	RES=$(sbatch --dependency=afterok:${RES##* } $file)
@@ -85,8 +85,8 @@ do
 	
 	echo "work=$dir/$job_dir" >> $file
 	echo "cd \$work" >> $file
-	# echo "PeptideProphetParser /gss_gpfs_scratch/ali.b/xtandem/1/1607011A_NC20A_10ul_180min.tandem.pep.xml ACCMASS PPM NOICAT MINPROB=0.05" >> $file
-	echo "python $dir/PeptideProphetParser`printf %01d $job`.py" >> $file
+	echo "PeptideProphetParser /gss_gpfs_scratch/ali.b/xtandem/1/1607011A_NC20A_10ul_180min.tandem.pep.xml ACCMASS PPM NOICAT MINPROB=0.05" >> $file
+	# echo "python $dir/PeptideProphetParser`printf %01d $job`.py" >> $file   # for testing
 	### submit PeptideProphetParser job into cluster
 	echo "$RES"
 	RES=$(sbatch --dependency=afterok:${RES##* } $file)
